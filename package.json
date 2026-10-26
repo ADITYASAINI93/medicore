@@ -1,0 +1,20 @@
+{
+  "name": "medicore-hospital-system",
+  "version": "2.0.0",
+  "description": "Enterprise Hospital Management System with Staff Queue Dashboard and Mobile Patient Portal",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve .",
+    "preview": "npx serve ."
+  },
+  "keywords": [
+    "hospital",
+    "healthcare",
+    "dashboard",
+    "queue-management",
+    "patient-portal"
+  ],
+  "author": "MediCore Health",
+  "license": "MIT"
+}

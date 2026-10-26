@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Environment & OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Deployment & IDE builds
+.vercel/
+.netlify/
+dist/
+build/
+.vscode/
+.idea/

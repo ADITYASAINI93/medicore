@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO & Social Sharing Meta Tags -->
+    <title>MediCore - Smart Hospital Management System & Patient Care Portal</title>
+    <meta name="description" content="MediCore is an enterprise hospital management platform featuring a staff admin queue dashboard, live doctor scheduling, mobile-first patient portal, and intelligent wait-time prediction.">
+    <meta name="keywords" content="hospital management, healthcare, patient portal, queue management, doctor scheduling, medical billing, triage system">
+    <meta name="author" content="MediCore Health">
+    <meta name="theme-color" content="#2563eb">
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MediCore - Smart Hospital Management System">
+    <meta property="og:description" content="Enterprise healthcare dashboard with real-time queue intelligence, doctor assignment, and mobile patient care portal.">
+    <meta property="og:site_name" content="MediCore Healthcare">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MediCore - Smart Hospital Management System">
+    <meta name="twitter:description" content="Connected real-time hospital management with dual staff and patient interfaces.">
+
+    <!-- Favicon (Inline SVG Pulse Heart) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/></svg>">
+
+    <!-- Typography & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="toast-container" role="status" aria-live="polite"></div>
+
+    <!-- ========================================== -->
+    <!-- 1. AUTHENTICATION / LOGIN SCREEN          -->
+    <!-- ========================================== -->
+    <div id="loginPage" class="auth-page">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="brand-logo" aria-hidden="true">
+                    <i data-lucide="activity"></i>
+                </div>
+                <h2>MediCore Health</h2>
+                <p>Enterprise Hospital Management & Patient Care</p>
+                <div class="live-status-pill">
+                    <span class="pulse-dot"></span> System Online & Ready
+                </div>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="auth-tabs" role="tablist">
+                <button type="button" class="auth-tab active" id="tabStaff" onclick="switchLoginTab('staff')" role="tab" aria-selected="true">
+                    <i data-lucide="shield-check"></i> Staff Portal
+                </button>
+                <button type="button" class="auth-tab" id="tabPatient" onclick="switchLoginTab('patient')" role="tab" aria-selected="false">
+                    <i data-lucide="user"></i> Patient Portal
+                </button>
+            </div>
+
+            <!-- Staff Login Form -->
+            <form id="staffLoginForm" onsubmit="handleStaffLogin(event)">
+                <div class="form-group">
+                    <label for="staffUser">Staff Username / ID</label>
+                    <div class="input-icon-wrap">
+                        <i data-lucide="user-check"></i>
+                        <input type="text" id="staffUser" class="input-field" value="admin" required placeholder="e.g. admin" autocomplete="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="staffPass">Security Password</label>
+                    <div class="input-icon-wrap">
+                        <i data-lucide="lock"></i>
+                        <input type="password" id="staffPass" class="input-field" value="admin123" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary w-full mt-4">
+                    <i data-lucide="log-in"></i> Access Admin Dashboard
+                </button>
+                <p class="auth-hint">Default credentials pre-filled: <code>admin</code> / <code>admin123</code></p>
+            </form>
+
+            <!-- Patient Login Form -->
+            <form id="patientLoginForm" style="display: none;" onsubmit="handlePatientLogin(event)">
+                <div class="form-group">
+                    <label for="patientIdInput">Patient ID</label>
+                    <div class="input-icon-wrap">
+                        <i data-lucide="credit-card"></i>
+                        <input type="text" id="patientIdInput" class="input-field" value="PT-1001" required placeholder="e.g. PT-1001">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="patientPhoneInput">Mobile Number (Last 4 Digits)</label>
+                    <div class="input-icon-wrap">
+                        <i data-lucide="phone"></i>
+                        <input type="text" id="patientPhoneInput" class="input-field" value="4432" maxlength="4" required placeholder="e.g. 4432">
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary w-full mt-4" style="background: var(--teal-primary);">
+                    <i data-lucide="arrow-right-circle"></i> View My Appointment & Status
+                </button>
+                <div class="guest-booking-divider">
+                    <span>OR</span>
+                </div>
+                <button type="button" class="btn-outline w-full" onclick="handleGuestBooking()">
+                    <i data-lucide="user-plus"></i> Book as New Patient (Guest)
+                </button>
+                <p class="auth-hint">Demo Patient: ID <code>PT-1001</code> & Mobile <code>4432</code></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. ADMIN / STAFF DASHBOARD LAYOUT          -->
+    <!-- ========================================== -->
+    <div id="adminLayout" class="app-layout" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div class="brand-text">
+                    <h2>MediCore</h2>
+                    <span>Staff Portal</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-menu">
+                <button class="nav-item active" onclick="navigateTo('dashboard')">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('registration')">
+                    <i data-lucide="user-plus"></i>
+                    <span>Admit Patient</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('queue')">
+                    <i data-lucide="users"></i>
+                    <span>Queue Manager</span>
+                    <span class="nav-badge" id="sidebarQueueCount">5</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('doctors')">
+                    <i data-lucide="stethoscope"></i>
+                    <span>Doctors</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('billing')">
+                    <i data-lucide="receipt"></i>
+                    <span>Billing & Invoices</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('search')">
+                    <i data-lucide="search"></i>
+                    <span>Search Records</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="nav-item" onclick="toggleTheme()">
+                    <i data-lucide="moon" id="adminThemeIcon"></i>
+                    <span>Dark / Light Mode</span>
+                </button>
+                <button class="nav-item text-danger" onclick="handleLogout()">
+                    <i data-lucide="log-out"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
+            <!-- Admin Topbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="icon-btn mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar Menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="globalSearch" placeholder="Search patients, doctors, tokens..." oninput="handleGlobalSearch(event)">
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="live-sync-indicator">
+                        <span class="sync-dot"></span> Realtime Sync Active
+                    </div>
+                    <button class="btn-primary btn-sm" onclick="navigateTo('registration')">
+                        <i data-lucide="plus"></i> Admit Patient
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Dr+Admin&background=2563eb&color=fff');"></div>
+                        <div class="user-meta">
+                            <strong>Dr. Administrator</strong>
+                            <small>Chief Medical Officer</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Admin Views -->
+            <main class="page-content">
+
+                <!-- 1. DASHBOARD -->
+                <section id="page-dashboard" class="page-view active">
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Hospital Overview</h1>
+                            <p>Live patient statistics, doctor availability, and clinic analytics.</p>
+                        </div>
+                        <div class="date-badge" id="currentDateBadge">Today: Live Clinic Flow</div>
+                    </div>
+
+                    <!-- KPI Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-blue-subtle text-primary">
+                                <i data-lucide="users"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span>Total Intake Today</span>
+                                <h3 id="statTotalPatients">18</h3>
+                                <small class="text-success"><i data-lucide="trending-up"></i> +12% vs yesterday</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon bg-amber-subtle text-amber">
+                                <i data-lucide="clock"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span>Active In Queue</span>
+                                <h3 id="statActiveQueue">5</h3>
+                                <small>Avg wait: ~18 mins</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon bg-red-subtle text-danger">
+                                <i data-lucide="alert-triangle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span>Emergency Cases</span>
+                                <h3 id="statEmergencyCount">2</h3>
+                                <small class="text-danger">Priority 1 Attention</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon bg-emerald-subtle text-success">
+                                <i data-lucide="user-check"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span>Doctors Available</span>
+                                <h3 id="statDoctorsAvail">3 / 6</h3>
+                                <small>1 in surgery, 1 busy</small>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-icon bg-indigo-subtle text-indigo">
+                                <i data-lucide="banknote"></i>
+                            </div>
+                            <div class="stat-details">
+                                <span>Today's Revenue</span>
+                                <h3 id="statRevenue">₹ 24,800</h3>
+                                <small class="text-success">Invoices cleared</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-row">
+                        <div class="card chart-card">
+                            <div class="card-header space-between">
+                                <div>
+                                    <h3 class="card-title">Patient Intake (Last 7 Days)</h3>
+                                    <p class="card-subtitle">Daily footfall and emergency split</p>
+                                </div>
+                                <span class="badge badge-primary">Real-time</span>
+                            </div>
+                            <div class="chart-canvas-wrap">
+                                <canvas id="intakeChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="card chart-card">
+                            <div class="card-header space-between">
+                                <div>
+                                    <h3 class="card-title">Department Intake Split</h3>
+                                    <p class="card-subtitle">Active distribution by department</p>
+                                </div>
+                            </div>
+                            <div class="chart-canvas-wrap">
+                                <canvas id="departmentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Split Row: Recent Activity & Completed Visits -->
+                    <div class="grid-2 mt-6">
+                        <div class="card">
+                            <div class="card-header space-between">
+                                <h3 class="card-title"><i data-lucide="history"></i> Live Activity Feed</h3>
+                                <small class="text-secondary">Instant Event Stream</small>
+                            </div>
+                            <div class="activity-feed" id="activityFeed">
+                                <!-- Populated dynamically by app.js -->
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header space-between">
+                                <h3 class="card-title"><i data-lucide="check-circle-2"></i> Completed Visits Today</h3>
+                                <span class="badge badge-success" id="completedCountBadge">0 Completed</span>
+                            </div>
+                            <div class="activity-feed" id="completedVisitsList">
+                                <!-- Populated dynamically by app.js -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. PATIENT ADMISSION / REGISTRATION -->
+                <section id="page-registration" class="page-view">
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Admit New Patient</h1>
+                            <p>Register an in-person arrival and assign initial triage priority.</p>
+                        </div>
+                    </div>
+
+                    <div class="card form-card">
+                        <form id="adminRegForm" onsubmit="handleAdminRegistration(event)">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label for="regName">Full Patient Name *</label>
+                                    <input type="text" id="regName" class="input-field" placeholder="e.g. Rahul Sharma" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regAge">Age *</label>
+                                    <input type="number" id="regAge" class="input-field" placeholder="32" min="1" max="120" required>
+                                </div>
+                            </div>
+
+                            <div class="grid-3">
+                                <div class="form-group">
+                                    <label for="regGender">Gender *</label>
+                                    <select id="regGender" class="input-field">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regUrgency">Triage Priority *</label>
+                                    <select id="regUrgency" class="input-field">
+                                        <option value="Regular">Regular (Standard)</option>
+                                        <option value="VIP">VIP (Expedited)</option>
+                                        <option value="Emergency">Emergency (Immediate)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regDoctor">Pre-Allot Doctor (Optional)</label>
+                                    <select id="regDoctor" class="input-field">
+                                        <option value="">-- Auto Assign Later --</option>
+                                        <!-- Populated dynamically -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="regAilment">Symptoms / Medical Complaint *</label>
+                                <textarea id="regAilment" class="input-field" rows="3" placeholder="Describe symptoms, vital signs or pain notes..." required></textarea>
+                            </div>
+
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button type="reset" class="btn-outline">Clear Form</button>
+                                <button type="submit" class="btn-primary">
+                                    <i data-lucide="check"></i> Register Patient & Admit to Queue
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- 3. QUEUE MANAGEMENT -->
+                <section id="page-queue" class="page-view">
+                    <div class="page-title-row space-between">
+                        <div>
+                            <h1>Live Queue Management</h1>
+                            <p>Real-time patient flow, triage sequencing, and doctor assignment.</p>
+                        </div>
+
+                        <!-- Hybrid Auto-Sort Controls -->
+                        <div class="queue-sort-toolbar">
+                            <span class="toolbar-label"><i data-lucide="arrow-down-up"></i> Auto-Sort:</span>
+                            <button type="button" class="btn-toggle active" id="btnAutoSortToggle" onclick="toggleAutoSort()">
+                                <span class="toggle-indicator"></span>
+                                <span id="autoSortLabel">Emergency &gt; VIP &gt; Time (ON)</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Doctors Load Bar -->
+                    <div class="card mb-4">
+                        <div class="space-between items-center mb-2">
+                            <h4 style="font-size:0.95rem; font-weight:700;"><i data-lucide="stethoscope"></i> Realtime Doctor Workload Balance</h4>
+                            <small class="text-secondary">Monitors queue pressure per physician</small>
+                        </div>
+                        <div class="doctor-workload-chips" id="doctorWorkloadChips">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Queue Table Card -->
+                    <div class="card table-card">
+                        <div class="table-header-toolbar">
+                            <div class="search-bar small">
+                                <i data-lucide="search"></i>
+                                <input type="text" id="queueSearchInput" placeholder="Filter patient name or ID..." oninput="filterQueueTable()">
+                            </div>
+                            <div class="filter-pills" id="queuePriorityFilters">
+                                <button class="filter-tab active" onclick="filterQueuePriority('All')">All (<span id="qCountAll">0</span>)</button>
+                                <button class="filter-tab pill-danger" onclick="filterQueuePriority('Emergency')">Emergency (<span id="qCountEmerg">0</span>)</button>
+                                <button class="filter-tab pill-amber" onclick="filterQueuePriority('VIP')">VIP (<span id="qCountVIP">0</span>)</button>
+                                <button class="filter-tab pill-blue" onclick="filterQueuePriority('Regular')">Regular (<span id="qCountReg">0</span>)</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="queueTable">
+                                <thead>
+                                    <tr>
+                                        <th>Token / ID</th>
+                                        <th>Patient Info</th>
+                                        <th>Ailment & Complaint</th>
+                                        <th>Priority</th>
+                                        <th>Allotted Doctor</th>
+                                        <th>Status</th>
+                                        <th>Wait Est.</th>
+                                        <th class="text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="queueTableBody">
+                                    <!-- Populated dynamically by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="queueEmptyState" class="empty-state" style="display: none;">
+                            <div class="empty-icon"><i data-lucide="check-circle"></i></div>
+                            <h3>All Patients Attended To!</h3>
+                            <p>There are currently no waiting patients in the queue.</p>
+                            <button class="btn-primary mt-4" onclick="navigateTo('registration')">
+                                <i data-lucide="plus"></i> Admit New Patient
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. DOCTOR MANAGEMENT -->
+                <section id="page-doctors" class="page-view">
+                    <div class="page-title-row space-between">
+                        <div>
+                            <h1>Doctor Directory & Duty Status</h1>
+                            <p>Live physician roster, specialty controls, and fee schedules.</p>
+                        </div>
+                        <button class="btn-primary" onclick="openModal('addDoctorModal')">
+                            <i data-lucide="user-plus"></i> Add New Doctor
+                        </button>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="filter-pills mb-4" id="doctorStatusFilters">
+                        <button class="filter-tab active" onclick="filterDoctorsByStatus('All')">All Doctors</button>
+                        <button class="filter-tab" onclick="filterDoctorsByStatus('Available')">Available</button>
+                        <button class="filter-tab" onclick="filterDoctorsByStatus('Busy')">Busy</button>
+                        <button class="filter-tab" onclick="filterDoctorsByStatus('In Surgery')">In Surgery</button>
+                        <button class="filter-tab" onclick="filterDoctorsByStatus('Off Duty')">Off Duty</button>
+                    </div>
+
+                    <!-- Doctors Grid -->
+                    <div class="doctor-cards-grid" id="doctorGridContainer">
+                        <!-- Populated dynamically by app.js -->
+                    </div>
+                </section>
+
+                <!-- 5. BILLING & INVOICES -->
+                <section id="page-billing" class="page-view">
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Billing & Invoice Settlement</h1>
+                            <p>Generate compliant discharge bills and consultation receipts in ₹ INR.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <h3 class="card-title mb-4"><i data-lucide="file-text"></i> Invoice Line Items</h3>
+                            <div class="form-group">
+                                <label for="billPatientSelect">Select Discharged Patient</label>
+                                <select id="billPatientSelect" class="input-field" onchange="autoFillBillPatient()">
+                                    <option value="">-- Choose Patient --</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="billPatientName">Patient Name</label>
+                                <input type="text" id="billPatientName" class="input-field" placeholder="Patient Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="billConsult">Doctor Consultation Fee (₹)</label>
+                                <input type="number" id="billConsult" class="input-field" value="800" oninput="recalcBillTotal()">
+                            </div>
+                            <div class="form-group">
+                                <label for="billRoom">Room / Bed Charges (₹)</label>
+                                <input type="number" id="billRoom" class="input-field" value="0" oninput="recalcBillTotal()">
+                            </div>
+                            <div class="form-group">
+                                <label for="billMeds">Medicine & Pharmacy (₹)</label>
+                                <input type="number" id="billMeds" class="input-field" value="350" oninput="recalcBillTotal()">
+                            </div>
+                            <div class="form-group">
+                                <label for="billEmergency">Emergency Triage Surcharge (₹)</label>
+                                <input type="number" id="billEmergency" class="input-field" value="0" oninput="recalcBillTotal()">
+                            </div>
+                        </div>
+
+                        <div class="card invoice-summary-card">
+                            <h3 class="card-title text-center text-primary mb-4">Official Receipt Preview</h3>
+                            <div class="invoice-meta-box">
+                                <div class="space-between mb-2">
+                                    <span class="text-secondary">Hospital Name:</span>
+                                    <strong>MediCore Multi-Speciality</strong>
+                                </div>
+                                <div class="space-between mb-2">
+                                    <span class="text-secondary">Date:</span>
+                                    <strong id="invoiceDate">Live Timestamp</strong>
+                                </div>
+                                <div class="space-between mb-2">
+                                    <span class="text-secondary">Invoice ID:</span>
+                                    <strong id="invoiceIdBadge">INV-9821</strong>
+                                </div>
+                            </div>
+
+                            <div class="invoice-calc-row">
+                                <span>Subtotal</span>
+                                <strong id="billSubtotal">₹ 1,150.00</strong>
+                            </div>
+                            <div class="invoice-calc-row">
+                                <span>Healthcare GST / Tax (18%)</span>
+                                <strong id="billTax">₹ 207.00</strong>
+                            </div>
+                            <div class="invoice-divider"></div>
+                            <div class="invoice-total-row">
+                                <span>Final Payable</span>
+                                <span class="total-amount" id="billTotal">₹ 1,357.00</span>
+                            </div>
+
+                            <button class="btn-primary w-full mt-6" onclick="generateInvoiceReceipt()">
+                                <i data-lucide="printer"></i> Finalize & Print Invoice
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. SEARCH RECORDS -->
+                <section id="page-search" class="page-view">
+                    <div class="page-title-row">
+                        <div>
+                            <h1>Global Record Finder</h1>
+                            <p>Look up historical diagnoses, patient tokens, and doctor assignments.</p>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="search-bar large">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="deepSearchInput" placeholder="Type patient name, token ID, or symptom to search..." oninput="runDeepSearch()">
+                        </div>
+                    </div>
+                    <div id="deepSearchResults" class="search-results-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. PATIENT PORTAL LAYOUT (MOBILE FIRST)   -->
+    <!-- ========================================== -->
+    <div id="patientLayout" class="patient-theme" style="display: none;">
+        <!-- Patient Topbar -->
+        <header class="patient-topbar">
+            <div class="flex items-center gap-3">
+                <div class="patient-logo">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                <div>
+                    <h2 class="patient-brand">MediCore <span class="tag">Patient</span></h2>
+                    <small class="patient-sub">Personal Care Portal</small>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button class="icon-btn" onclick="toggleTheme()" title="Toggle Dark/Light" aria-label="Toggle Dark/Light Mode">
+                    <i data-lucide="moon" id="patientThemeIcon"></i>
+                </button>
+                <button class="btn-outline btn-sm" onclick="handleLogout()">
+                    <i data-lucide="log-out"></i> Exit
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area for Patient -->
+        <main class="patient-main-content">
+
+            <!-- VIEW 1: PATIENT HOME -->
+            <div id="view-patient-home" class="patient-view active">
+                <div class="patient-welcome">
+                    <h1>Hello, <span id="patientGreeting">Patient</span> 👋</h1>
+                    <p>Track your token, live doctor schedule & estimated invoice.</p>
+                </div>
+
+                <!-- Next Appointment Hero Card -->
+                <div class="patient-hero-card">
+                    <div class="hero-top space-between">
+                        <span class="hero-tag"><i data-lucide="calendar"></i> Active Appointment</span>
+                        <span class="token-pill" id="patientTokenBadge">Token: --</span>
+                    </div>
+
+                    <div class="hero-body mt-4">
+                        <div class="doc-profile-row">
+                            <div class="doc-icon-wrap">
+                                <i data-lucide="stethoscope"></i>
+                            </div>
+                            <div>
+                                <h2 id="patientHeroDoctor">No Doctor Assigned Yet</h2>
+                                <p id="patientHeroDept" class="hero-dept">Please book an appointment below</p>
+                            </div>
+                        </div>
+
+                        <div class="hero-status-row mt-4 space-between">
+                            <div>
+                                <small>Current Status</small>
+                                <div class="badge badge-warning" id="patientHeroStatus">Waiting in Queue</div>
+                            </div>
+                            <div class="text-right">
+                                <small>Consultation Fee</small>
+                                <div class="fee-display" id="patientHeroFee">₹ 800</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-footer mt-4">
+                        <button class="btn-patient-primary w-full" onclick="navigatePatient('status')">
+                            <i data-lucide="activity"></i> Track Live Queue & Arrival Time
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Expected Invoice Breakdown Card -->
+                <div class="patient-card mt-4">
+                    <div class="space-between items-center mb-3">
+                        <h3 class="card-title"><i data-lucide="receipt"></i> Expected Invoice Estimate</h3>
+                        <span class="badge badge-outline">Live Estimate</span>
+                    </div>
+                    <div class="estimate-breakdown" id="patientInvoiceBreakdown">
+                        <div class="estimate-row">
+                            <span>Doctor Consultation Fee</span>
+                            <strong id="estDocFee">₹ 800</strong>
+                        </div>
+                        <div class="estimate-row">
+                            <span>Registration & Triage</span>
+                            <span>₹ 150</span>
+                        </div>
+                        <div class="estimate-row">
+                            <span>Standard Medicine Estimate</span>
+                            <span>₹ 250 - ₹ 450</span>
+                        </div>
+                        <div class="estimate-row">
+                            <span>Estimated Tax (18%)</span>
+                            <span id="estTax">₹ 216</span>
+                        </div>
+                        <div class="estimate-divider"></div>
+                        <div class="estimate-total-row">
+                            <div>
+                                <strong>Estimated Total:</strong>
+                                <small class="text-secondary block">May vary based on prescribed medication</small>
+                            </div>
+                            <span class="est-price" id="estTotalRange">₹ 1,416 - ₹ 1,650</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Cards -->
+                <div class="patient-actions-grid mt-4">
+                    <div class="action-card" onclick="navigatePatient('book')">
+                        <div class="action-icon bg-teal-subtle text-teal">
+                            <i data-lucide="calendar-plus"></i>
+                        </div>
+                        <h4>Book Appointment</h4>
+                        <p>Choose doctor & symptoms</p>
+                    </div>
+
+                    <div class="action-card" onclick="navigatePatient('status')">
+                        <div class="action-icon bg-blue-subtle text-primary">
+                            <i data-lucide="gauge"></i>
+                        </div>
+                        <h4>Live Queue Status</h4>
+                        <p>Realtime wait countdown</p>
+                    </div>
+
+                    <div class="action-card" onclick="navigatePatient('history')">
+                        <div class="action-icon bg-indigo-subtle text-indigo">
+                            <i data-lucide="history"></i>
+                        </div>
+                        <h4>Past Invoices</h4>
+                        <p>Discharge slips & receipts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: BOOK APPOINTMENT -->
+            <div id="view-patient-book" class="patient-view">
+                <div class="patient-view-header">
+                    <h2>Book Doctor Consultation</h2>
+                    <p>Select your department, doctor preference, and describe symptoms.</p>
+                </div>
+
+                <div class="patient-card">
+                    <form id="patientBookForm" onsubmit="submitPatientBooking(event)">
+                        <div class="form-group">
+                            <label for="pbName">Patient Name *</label>
+                            <input type="text" id="pbName" class="input-field" required placeholder="Full Name">
+                        </div>
+
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="pbAge">Age *</label>
+                                <input type="number" id="pbAge" class="input-field" required placeholder="Age" min="1" max="120">
+                            </div>
+                            <div class="form-group">
+                                <label for="pbUrgency">Urgency Level *</label>
+                                <select id="pbUrgency" class="input-field" onchange="updateBookingCostEstimate()">
+                                    <option value="Regular">Regular Consultation</option>
+                                    <option value="VIP">VIP Express (+₹500)</option>
+                                    <option value="Emergency">Emergency Triage (+₹1000)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pbDept">Select Department *</label>
+                            <select id="pbDept" class="input-field" onchange="renderDoctorCarousel()">
+                                <option value="All">All Departments</option>
+                                <option value="Cardiology">Cardiology</option>
+                                <option value="Neurology">Neurology</option>
+                                <option value="Pediatrics">Pediatrics</option>
+                                <option value="Orthopedics">Orthopedics</option>
+                                <option value="General Medicine">General Medicine</option>
+                                <option value="Dermatology">Dermatology</option>
+                            </select>
+                        </div>
+
+                        <!-- Doctor Selection Carousel -->
+                        <div class="form-group">
+                            <div class="space-between items-center mb-2">
+                                <label>Choose Your Doctor *</label>
+                                <small class="text-teal">Tap card to select</small>
+                            </div>
+                            <div class="doctor-carousel" id="pbDoctorCarousel">
+                                <!-- Populated dynamically by app.js -->
+                            </div>
+                            <input type="hidden" id="pbSelectedDoctor" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pbAilment">Symptoms / Medical Issue *</label>
+                            <textarea id="pbAilment" class="input-field" rows="3" placeholder="Describe symptoms or reasons for visit..." required></textarea>
+                        </div>
+
+                        <!-- Realtime Price preview -->
+                        <div class="booking-price-preview">
+                            <span>Estimated Booking Total:</span>
+                            <strong id="pbEstimatedPrice">₹ 950 - ₹ 1,200</strong>
+                        </div>
+
+                        <button type="submit" class="btn-patient-primary w-full mt-4">
+                            <i data-lucide="check-circle"></i> Confirm Appointment & Get Token
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- VIEW 3: LIVE STATUS & QUEUE INTELLIGENCE -->
+            <div id="view-patient-status" class="patient-view">
+                <div class="patient-view-header">
+                    <h2>Live Queue Intelligence</h2>
+                    <p>Smart real-time wait calculation tailored to your assigned doctor.</p>
+                </div>
+
+                <!-- Smart Arrival Recommendation Card -->
+                <div class="smart-arrival-card">
+                    <div class="smart-icon"><i data-lucide="sparkles"></i></div>
+                    <div>
+                        <span class="smart-title">Smart Arrival Recommendation</span>
+                        <h2 class="smart-time" id="pqRecommendedArrival">Arrive at 4:20 PM</h2>
+                        <p class="smart-desc" id="pqArrivalExplanation">Based on patients ahead and doctor consultation pace.</p>
+                    </div>
+                </div>
+
+                <!-- Queue Stats Metric Row -->
+                <div class="patient-metrics-row mt-4">
+                    <div class="metric-box">
+                        <small>Token Number</small>
+                        <h3 id="pqTokenNum">PT-1001</h3>
+                    </div>
+                    <div class="metric-box">
+                        <small>Patients Ahead</small>
+                        <h3 id="pqAheadCount">2</h3>
+                    </div>
+                    <div class="metric-box">
+                        <small>Est. Wait</small>
+                        <h3 id="pqWaitMins">~18 mins</h3>
+                    </div>
+                    <div class="metric-box">
+                        <small>Confidence</small>
+                        <h3 class="text-success" id="pqConfidence">94% High</h3>
+                    </div>
+                </div>
+
+                <!-- Live Animated Queue Progress Bar -->
+                <div class="patient-card mt-4">
+                    <div class="space-between mb-2">
+                        <strong>Queue Progress</strong>
+                        <span class="text-teal" id="pqProgressPercent">65%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="pqProgressBar" style="width: 65%;"></div>
+                    </div>
+                    <small class="text-secondary mt-2 block" id="pqLiveTicker"><i data-lucide="refresh-cw" class="spin-icon"></i> Live sync updating every 5 seconds</small>
+                </div>
+
+                <!-- 4-Stage Timeline Tracker -->
+                <div class="patient-card mt-4">
+                    <h3 class="card-title mb-4"><i data-lucide="milestone"></i> Consultation Stage</h3>
+                    <div class="stage-timeline">
+                        <div class="stage-item completed" id="stage1">
+                            <div class="stage-marker"><i data-lucide="check"></i></div>
+                            <div class="stage-content">
+                                <h4>Token Generated</h4>
+                                <small>Patient admitted and queued</small>
+                            </div>
+                        </div>
+
+                        <div class="stage-item completed" id="stage2">
+                            <div class="stage-marker"><i data-lucide="check"></i></div>
+                            <div class="stage-content">
+                                <h4>Doctor Assigned</h4>
+                                <small id="stageDocName">Assigned to Dr. Sarah Smith (Cabin 104)</small>
+                            </div>
+                        </div>
+
+                        <div class="stage-item active" id="stage3">
+                            <div class="stage-marker"><i data-lucide="clock"></i></div>
+                            <div class="stage-content">
+                                <h4>Waiting in Triage / Queue</h4>
+                                <small>You will be notified when summoned</small>
+                            </div>
+                        </div>
+
+                        <div class="stage-item" id="stage4">
+                            <div class="stage-marker"><i data-lucide="check-circle-2"></i></div>
+                            <div class="stage-content">
+                                <h4>Consultation Completed</h4>
+                                <small>Prescription & invoice issued</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 4: PAST HISTORY & INVOICES -->
+            <div id="view-patient-history" class="patient-view">
+                <div class="patient-view-header">
+                    <h2>My Medical History & Receipts</h2>
+                    <p>Private access to completed consultations and downloadable invoices.</p>
+                </div>
+
+                <div class="patient-history-list" id="patientHistoryList">
+                    <!-- Populated dynamically by app.js -->
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Fixed Mobile Bottom Navigation -->
+        <nav class="patient-bottom-nav" aria-label="Patient Portal Bottom Navigation">
+            <button class="bottom-tab active" onclick="navigatePatient('home')">
+                <i data-lucide="home"></i>
+                <span>Home</span>
+            </button>
+            <button class="bottom-tab" onclick="navigatePatient('book')">
+                <i data-lucide="calendar-plus"></i>
+                <span>Book</span>
+            </button>
+            <button class="bottom-tab" onclick="navigatePatient('status')">
+                <i data-lucide="activity"></i>
+                <span>Status</span>
+            </button>
+            <button class="bottom-tab" onclick="navigatePatient('history')">
+                <i data-lucide="receipt"></i>
+                <span>Bills</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. MODALS & POPUPS                         -->
+    <!-- ========================================== -->
+
+    <!-- Assign Doctor Modal (Staff Side) -->
+    <div id="assignDoctorModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3><i data-lucide="user-check"></i> Assign Doctor to Patient</h3>
+                <button class="icon-btn" onclick="closeModal('assignDoctorModal')" aria-label="Close Modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary mb-4">Patient: <strong id="assignModalPatientName">--</strong> (<span id="assignModalPatientId">--</span>)</p>
+                <div class="form-group">
+                    <label for="assignModalDoctorSelect">Select Attending Doctor</label>
+                    <select id="assignModalDoctorSelect" class="input-field">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div class="doc-summary-badge" id="assignModalDocSummary">
+                    <!-- Updated on doctor change -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" onclick="closeModal('assignDoctorModal')">Cancel</button>
+                <button class="btn-primary" onclick="confirmDoctorAssignment()">Confirm Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Remove Patient Modal -->
+    <div id="confirmRemoveModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="text-danger"><i data-lucide="alert-triangle"></i> Remove Patient from Queue?</h3>
+                <button class="icon-btn" onclick="closeModal('confirmRemoveModal')" aria-label="Close Modal"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove <strong id="removePatientName">this patient</strong> from active queue? This action cannot be reversed.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline" onclick="closeModal('confirmRemoveModal')">Cancel</button>
+                <button class="btn-danger" id="btnConfirmRemoveAction">Yes, Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Doctor Modal -->
+    <div id="addDoctorModal" class="modal-backdrop" role="dialog" aria-modal="true">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3><i data-lucide="stethoscope"></i> Add Medical Professional</h3>
+                <button class="icon-btn" onclick="closeModal('addDoctorModal')" aria-label="Close Modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="newDoctorForm" onsubmit="handleAddNewDoctor(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="docName">Doctor Full Name *</label>
+                        <input type="text" id="docName" class="input-field" placeholder="e.g. Dr. Rohan Mehta" required>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="docDept">Department *</label>
+                            <input type="text" id="docDept" class="input-field" placeholder="e.g. Cardiology" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="docFee">Consultation Fee (₹) *</label>
+                            <input type="number" id="docFee" class="input-field" value="800" required>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="docStatus">Initial Status *</label>
+                            <select id="docStatus" class="input-field">
+                                <option value="Available">Available</option>
+                                <option value="Busy">Busy</option>
+                                <option value="In Surgery">In Surgery</option>
+                                <option value="Off Duty">Off Duty</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="docExp">Experience (Years)</label>
+                            <input type="number" id="docExp" class="input-field" value="10">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-outline" onclick="closeModal('addDoctorModal')">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Doctor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION ENGINE -->
+    <script src="./app.js"></script>
+</body>
+</html>

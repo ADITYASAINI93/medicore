@@ -1,0 +1,18 @@
+# MediCore Hospital Management System Database
+
+[DOCTORS]
+# ID|Name|Department|Status|Fee|Rating|Experience
+DOC-01|Dr. Sarah Smith|Cardiology|Available|800|4.9|14
+DOC-02|Dr. Michael Chen|Neurology|In Surgery|1200|4.8|18
+DOC-03|Dr. Emily Davis|Pediatrics|Available|600|4.7|10
+DOC-04|Dr. James Wilson|Orthopedics|Busy|900|4.9|16
+DOC-05|Dr. Aisha Patel|General Medicine|Available|500|4.9|12
+DOC-06|Dr. Robert Taylor|Dermatology|Off Duty|700|4.6|9
+
+[PATIENTS]
+# ID|Name|Age|Gender|Ailment|Priority|Status|AssignedDoctor|BookingTime
+PT-1001|John Doe|42|Male|Severe chest pain & shortness of breath|Emergency|Doctor Assigned|Dr. Sarah Smith|10:15 AM
+PT-1002|Eleanor Vance|29|Female|Migraine and visual auras|VIP|Waiting|Dr. Michael Chen|10:30 AM
+PT-1003|David Miller|55|Male|Knee joint inflammation|Regular|Waiting|Dr. James Wilson|10:45 AM
+PT-1004|Sophia Grace|8|Female|High viral fever & cough|Emergency|Waiting|Dr. Emily Davis|11:00 AM
+PT-1005|Marcus Brown|34|Male|Routine annual health consultation|Regular|Waiting|Dr. Aisha Patel|11:15 AM
